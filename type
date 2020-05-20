@@ -1,0 +1,79 @@
+Makefile:TOOLPREFIX := $(shell if i386-jos-elf-objdump -i 2>&1 | grep '^elf32-i386$$' >/dev/null 2>&1; \
+Makefile:	then echo 'i386-jos-elf-'; \
+Makefile:	echo "*** Is the directory with i386-jos-elf-gcc in your PATH?" 1>&2; \
+Makefile:	echo "*** prefix other than 'i386-jos-elf-', set your TOOLPREFIX" 1>&2; \
+Makefile:#CFLAGS = -fno-pic -static -fno-builtin -fno-strict-aliasing -fvar-tracking -fvar-tracking-assignments -O0 -g -Wall -MD -gdwarf-2 -m32 -Werror -fno-omit-frame-pointer
+Makefile:ASFLAGS = -m32 -gdwarf-2 -Wa,-divide
+Notes:test out-of-fd cases for creating pipe.
+README:Then run "make TOOLPREFIX=i386-jos-elf-". Now install the QEMU PC
+bootmain.c:  if(elf->magic != ELF_MAGIC)
+bootmain.c:  ph = (struct proghdr*)((uchar*)elf + elf->phoff);
+bootmain.c:  eph = ph + elf->phnum;
+bootmain.c:  entry = (void(*)(void))(elf->entry);
+exec.c:  curproc->tf->eip = elf.entry;  // main
+exec.c:  curproc->tf->esp = sp;
+file.c:    if(f->ref == 0){
+file.c:      f->ref = 1;
+file.c:  if(f->ref < 1)
+file.c:  f->ref++;
+file.c:  if(f->ref < 1)
+file.c:  if(--f->ref > 0){
+file.c:  f->ref = 0;
+file.c:  f->type = FD_NONE;
+file.c:  if(f->type == FD_INODE){
+file.c:    ilock(f->ip);
+file.c:    stati(f->ip, st);
+file.c:    iunlock(f->ip);
+file.c:  if(f->readable == 0)
+file.c:  if(f->type == FD_PIPE)
+file.c:    return piperead(f->pipe, addr, n);
+file.c:  if(f->type == FD_INODE){
+file.c:    ilock(f->ip);
+file.c:    if((r = readi(f->ip, addr, f->off, n)) > 0)
+file.c:      f->off += r;
+file.c:    iunlock(f->ip);
+file.c:  if(f->writable == 0)
+file.c:  if(f->type == FD_PIPE)
+file.c:    return pipewrite(f->pipe, addr, n);
+file.c:  if(f->type == FD_INODE){
+file.c:      ilock(f->ip);
+file.c:      if ((r = writei(f->ip, addr + i, f->off, n1)) > 0){
+file.c:          f->off += r;
+file.c:      iunlock(f->ip);
+fs.c:  ip->ref--;
+log.c:    memmove(dbuf->data, lbuf->data, BSIZE);  // copy block to dst
+log.c:  struct logheader *lh = (struct logheader *) (buf->data);
+log.c:  struct logheader *hb = (struct logheader *) (buf->data);
+mp.c:  if(conf->version != 1 && conf->version != 4)
+mp.c:  if(sum((uchar*)conf, conf->length) != 0)
+mp.c:  lapic = (uint*)conf->lapicaddr;
+mp.c:  for(p=(uchar*)(conf+1), e=(uchar*)conf+conf->length; p<e; ){
+printpcs:for p in i386-jos-elf-addr2line addr2line; do
+proc.c:  p->tf->cs = (SEG_UCODE << 3) | DPL_USER;
+proc.c:  p->tf->ds = (SEG_UDATA << 3) | DPL_USER;
+proc.c:  p->tf->es = p->tf->ds;
+proc.c:  p->tf->ss = p->tf->ds;
+proc.c:  p->tf->eflags = FL_IF;
+proc.c:  p->tf->esp = PGSIZE;
+proc.c:  p->tf->eip = 0;  // beginning of initcode.S
+proc.c:  np->tf->eax = 0;
+syscall.c:  return fetchint((myproc()->tf->esp) + 4 + 4*n, ip);
+syscall.c:  num = curproc->tf->eax;
+syscall.c:    curproc->tf->eax = syscalls[num]();
+syscall.c:    curproc->tf->eax = -1;
+sysfile.c:  f->type = FD_INODE;
+sysfile.c:  f->ip = ip;
+sysfile.c:  f->off = 0;
+sysfile.c:  f->readable = !(omode & O_WRONLY);
+sysfile.c:  f->writable = (omode & O_WRONLY) || (omode & O_RDWR);
+trap.c:  if(tf->trapno == T_SYSCALL){
+trap.c:  switch(tf->trapno){
+trap.c:            cpuid(), tf->cs, tf->eip);
+trap.c:          tf->trapno = 13;
+trap.c:    if(myproc() == 0 || (tf->cs&3) == 0){
+trap.c:              tf->trapno, cpuid(), tf->eip, rcr2());
+trap.c:            myproc()->pid, myproc()->name, tf->trapno,
+trap.c:            tf->err, cpuid(), tf->eip, rcr2());
+trap.c:  if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
+trap.c:     tf->trapno == T_IRQ0+IRQ_TIMER)
+trap.c:  if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
